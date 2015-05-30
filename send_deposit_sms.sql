@@ -28,7 +28,7 @@ CREATE PROCEDURE send_deposit_sms()
 	insert playsmsL.playsms_featureSchedule(c_timestamp, uid, name, message, schedule_rule, flag_active) 
 	select unix_timestamp(), 1,'MLP deposited', concat('MLP deposited amount: ','R',(select (deposit_amount) from deposits where flag_active = 0),' Total amount paid to date: ','R', sum(deposit_amount), ' on ',ddate),  0, 1 from deposits;
     
-    update playsms_featureSchedule set flag_active = 1;
+    update deposits set flag_active = 1;
 
 	insert playsmsL.playsms_featureSchedule_dst(c_timestamp, schedule_id, schedule, scheduled, name, destination)
 	select unix_timestamp(),1,now(), date_sub(now(), interval 2 hour),  contact_name, contact_no FROM sms;
