@@ -1,4 +1,4 @@
-drop table sms;
+#drop table sms;
 # for deposits
 create table sms
 (
@@ -14,19 +14,19 @@ flag_active int not null
 insert into sms(sms_db_name,app_name,contact_name, contact_no,flag_active)
 values('playsmsL','mpl','Khelelo Mahlatji','0726876562',1);
 
-#adding a flag
+#adding a flag on deposits table
 ALTER TABLE deposits  ADD COLUMN flag_active INT NULL DEFAULT 0 AFTER Description;
 
-#insert sms destination
-insert playsms_featureSchedule(c_timestamp, uid, name, message, schedule_rule, flag_active) 
-select unix_timestamp(), 1,'MLP deposited',concat('MLP deposited amount: ', 'R',deposit_amount,' ', ddate, ' total amount paid to date ','R',sum(deposit_amount)), 0, 1 from mpl.deposits;
+#insert sms destination - testing
+#insert playsms_featureSchedule(c_timestamp, uid, name, message, schedule_rule, flag_active) 
+#select unix_timestamp(), 1,'MLP deposited',concat('MLP deposited amount: ', 'R',deposit_amount,' ', ddate, ' total amount paid to date ','R',sum(deposit_amount)), 0, 1 from mpl.deposits;
 
 #procedure to insert into playsms destination
 DELIMITER //
 CREATE PROCEDURE send_deposit_sms()
    BEGIN
 	insert playsmsL.playsms_featureSchedule(c_timestamp, uid, name, message, schedule_rule, flag_active) 
-	select unix_timestamp(), 1,'MLP deposited', concat('MLP deposited amount: ','R',(select (deposit_amount) from deposits where flag_active = 0),' total amount paid to date ','R', sum(deposit_amount), ' ',ddate),  0, 1 from deposits;
+	select unix_timestamp(), 1,'MLP deposited', concat('MLP deposited amount: ','R',(select (deposit_amount) from deposits where flag_active = 0),' Total amount paid to date: ','R', sum(deposit_amount), ' on ',ddate),  0, 1 from deposits;
     
     update playsms_featureSchedule set flag_active = 1;
 
